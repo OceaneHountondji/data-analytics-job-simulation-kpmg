@@ -1,0 +1,105 @@
+---
+title: "data_cleaning"
+author: "Finafa Hountondji"
+date: "2024-01-27"
+output:
+---
+
+## Transactions base
+```{r}
+#displaying the database
+head(transa)
+
+#data structure
+str(transa)
+
+#converting strings to categorical variables
+transa$online_order=as.factor(transa$online_order)
+transa$order_status=as.factor(transa$order_status)
+transa$brand=as.factor(transa$brand)
+transa$product_line=as.factor(transa$product_line)
+transa$product_class=as.factor(transa$product_class)
+transa$product_size=as.factor(transa$product_size)
+
+#changing the date to the correct format
+SOLD_DATE=transa$product_first_sold_date
+SOLD_DATE=as.Date(SOLD_DATE, origin="1900-01-01")
+transa=cbind(transa,SOLD_DATE)
+
+#data check
+str(transa)
+head(transa)
+
+#check the spelling of the categories for categorical variables
+levels(transa$online_order)
+levels(transa$order_status)
+levels(transa$brand)
+levels(transa$product_line)
+levels(transa$product_class)
+levels(transa$product_size)
+
+#check for duplicated rows
+anyDuplicated(transa$transaction_id)
+
+```
+
+
+## Customer Demographic base
+```{r}
+#displaying the first rows of the table
+head(demo)
+
+#data structure
+str(demo)
+
+#converting strings to categorical variables
+demo$owns_car=as.factor(demo$owns_car)
+demo$deceased_indicator=as.factor(demo$deceased_indicator)
+demo$wealth_segment=as.factor(demo$wealth_segment)
+demo$job_industry_category=as.factor(demo$job_industry_category)
+demo$gender=as.factor(demo$gender)
+
+#correcting the date
+DOB1 = demo$DOB
+DOB1 = as.numeric(DOB1)
+DOB1 = as.Date(DOB1, origin = "1900-01-01")
+
+#correcting the categories
+library(forcats)
+demo$gender=fct_recode(demo$gender, "Female"="F", "Female"="Femal", "Male"="M")
+demo$job_industry_category=fct_recode(demo$job_industry_category, "Agriculture"="Argiculture")
+
+#suppressing the "default" column
+DEMO1=demo
+DEMO1=DEMO1[-11]
+DEMO1=cbind(DEMO1, DOB1)
+
+#missing values
+anyDuplicated(DEMO1$customer_id)
+
+#data check
+head(DEMO1)
+str(DEMO1)
+```
+
+
+## Customer Address base
+```{r}
+#displaying the first rows of the table
+head(adresse)
+
+#data structure
+str(adresse)
+
+#converting strings to categorical variables
+adresse$state=as.factor(adresse$state)
+adresse$country=as.factor(adresse$country)
+
+#correcting categories' titles
+library(forcats)
+adresse$state=fct_recode(adresse$state, "NSW"="New South Wales", "VIC"="Victoria")
+
+levels(adresse$state)
+levels(adresse$country)
+```
+
